@@ -1,0 +1,2 @@
+com/example/sampleembedding/BuildConfig.java
+ com.example.sampleembedding.BuildConfig

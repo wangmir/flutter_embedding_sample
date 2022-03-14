@@ -1,6 +1,8 @@
 package com.example.sampleembedding
 
+import android.net.wifi.WifiManager
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Column
@@ -12,12 +14,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.sampleembedding.ui.theme.SampleembeddingTheme
 // todo: cannot resolve io
-// import io.flutter.embedding.android.FlutterActivity
+import io.flutter.embedding.android.FlutterActivity
+import io.flutter.embedding.engine.FlutterEngine
+import io.flutter.embedding.engine.FlutterEngineCache
+import io.flutter.embedding.engine.dart.DartExecutor
 
 class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        warmUpFlutterEngine()
         setContent {
             SampleembeddingTheme {
                 // A surface container using the 'background' color from the theme
@@ -26,14 +32,34 @@ class MainActivity : ComponentActivity() {
                         Greeting("Android")
                         startFlutterActivityButton {
                             // todo: cannot resolve FlutterActivity.
-//                            startActivity(
-//                                FlutterActivity.createDefaultIntent(this)
-//                            )
+                            startActivity(
+                                // FlutterActivity.createDefaultIntent(this@MainActivity)
+                                FlutterActivity.withCachedEngine(ENGINE_ID).build(this@MainActivity)
+                            )
                         }
                     }
                 }
             }
         }
+    }
+
+    private val flutterEngine: FlutterEngine by lazy {
+        FlutterEngine(this)
+    }
+
+    val ENGINE_ID = "flutter_engine"
+
+    private var isWarmedUp = false
+
+    fun warmUpFlutterEngine() {
+        flutterEngine.dartExecutor.executeDartEntrypoint(
+            DartExecutor.DartEntrypoint.createDefault()
+        )
+
+        FlutterEngineCache
+            .getInstance()
+            .put(ENGINE_ID, flutterEngine)
+        isWarmedUp = true
     }
 }
 

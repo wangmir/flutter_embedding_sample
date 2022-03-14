@@ -1,6 +1,15 @@
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    String storageUrl = System.env.FLUTTER_STORAGE_BASE_URL ?: "https://storage.googleapis.com"
+
     repositories {
+        maven {
+            // todo: both absolute path or relative path won't work
+            url '../sample_module/build/host/outputs/repo'
+        }
+        maven {
+            url "$storageUrl/download.flutter.io"
+        }
         google()
         mavenCentral()
         jcenter() // Warning: this repository is going to shut down soon
